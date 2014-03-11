@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		332122A7010E4C1CAAE5C7B9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DEC2EB20DA5497EB9827620 /* libPods.a */; };
+		BC206BE118CA72B600BCE324 /* CCPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */; };
+		BC206BE418CA7CBD00BCE324 /* CCPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */; };
+		BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */; };
 		BC809FFB18BEE1640014C48B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFA18BEE1640014C48B /* Foundation.framework */; };
 		BC809FFD18BEE1640014C48B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFC18BEE1640014C48B /* CoreGraphics.framework */; };
 		BC809FFF18BEE1640014C48B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFE18BEE1640014C48B /* UIKit.framework */; };
@@ -19,6 +23,7 @@
 		BC80A01618BEE1640014C48B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFE18BEE1640014C48B /* UIKit.framework */; };
 		BC80A01E18BEE1640014C48B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BC80A01C18BEE1640014C48B /* InfoPlist.strings */; };
 		BC80A02018BEE1640014C48B /* CachingClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC80A01F18BEE1640014C48B /* CachingClientTests.m */; };
+		BCBAC7FB18CA50F900EAE334 /* CCMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCBAC7FA18CA50F900EAE334 /* CCMenuViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +37,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9DEC2EB20DA5497EB9827620 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC206BDF18CA72B600BCE324 /* CCPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotosViewController.h; sourceTree = "<group>"; };
+		BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotosViewController.m; sourceTree = "<group>"; };
+		BC206BE218CA7CBD00BCE324 /* CCPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotoCell.h; sourceTree = "<group>"; };
+		BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotoCell.m; sourceTree = "<group>"; };
+		BC206BE518CA84CA00BCE324 /* CCPhotoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotoDetailViewController.h; sourceTree = "<group>"; };
+		BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotoDetailViewController.m; sourceTree = "<group>"; };
 		BC809FF718BEE1640014C48B /* CachingClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CachingClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC809FFA18BEE1640014C48B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BC809FFC18BEE1640014C48B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -48,6 +60,9 @@
 		BC80A01B18BEE1640014C48B /* CachingClientTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CachingClientTests-Info.plist"; sourceTree = "<group>"; };
 		BC80A01D18BEE1640014C48B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BC80A01F18BEE1640014C48B /* CachingClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CachingClientTests.m; sourceTree = "<group>"; };
+		BCBAC7F918CA50F900EAE334 /* CCMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCMenuViewController.h; sourceTree = "<group>"; };
+		BCBAC7FA18CA50F900EAE334 /* CCMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCMenuViewController.m; sourceTree = "<group>"; };
+		EF6C5613752B44D08ECE7661 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +73,7 @@
 				BC809FFD18BEE1640014C48B /* CoreGraphics.framework in Frameworks */,
 				BC809FFF18BEE1640014C48B /* UIKit.framework in Frameworks */,
 				BC809FFB18BEE1640014C48B /* Foundation.framework in Frameworks */,
+				332122A7010E4C1CAAE5C7B9 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +97,7 @@
 				BC80A01918BEE1640014C48B /* CachingClientTests */,
 				BC809FF918BEE1640014C48B /* Frameworks */,
 				BC809FF818BEE1640014C48B /* Products */,
+				EF6C5613752B44D08ECE7661 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +117,7 @@
 				BC809FFC18BEE1640014C48B /* CoreGraphics.framework */,
 				BC809FFE18BEE1640014C48B /* UIKit.framework */,
 				BC80A01318BEE1640014C48B /* XCTest.framework */,
+				9DEC2EB20DA5497EB9827620 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -111,6 +129,14 @@
 				BC80A00A18BEE1640014C48B /* CCAppDelegate.m */,
 				BC80A00C18BEE1640014C48B /* Images.xcassets */,
 				BC80A00118BEE1640014C48B /* Supporting Files */,
+				BCBAC7F918CA50F900EAE334 /* CCMenuViewController.h */,
+				BCBAC7FA18CA50F900EAE334 /* CCMenuViewController.m */,
+				BC206BDF18CA72B600BCE324 /* CCPhotosViewController.h */,
+				BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */,
+				BC206BE518CA84CA00BCE324 /* CCPhotoDetailViewController.h */,
+				BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */,
+				BC206BE218CA7CBD00BCE324 /* CCPhotoCell.h */,
+				BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */,
 			);
 			path = CachingClient;
 			sourceTree = "<group>";
@@ -151,9 +177,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BC80A02318BEE1640014C48B /* Build configuration list for PBXNativeTarget "CachingClient" */;
 			buildPhases = (
+				9F9004BED0FD478487BA959A /* Check Pods Manifest.lock */,
 				BC809FF318BEE1640014C48B /* Sources */,
 				BC809FF418BEE1640014C48B /* Frameworks */,
 				BC809FF518BEE1640014C48B /* Resources */,
+				807C3C6BECEC4332AA90232D /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -235,6 +263,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		807C3C6BECEC4332AA90232D /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9F9004BED0FD478487BA959A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BC809FF318BEE1640014C48B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -242,6 +303,10 @@
 			files = (
 				BC80A00B18BEE1640014C48B /* CCAppDelegate.m in Sources */,
 				BC80A00718BEE1640014C48B /* main.m in Sources */,
+				BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */,
+				BC206BE118CA72B600BCE324 /* CCPhotosViewController.m in Sources */,
+				BC206BE418CA7CBD00BCE324 /* CCPhotoCell.m in Sources */,
+				BCBAC7FB18CA50F900EAE334 /* CCMenuViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +420,7 @@
 		};
 		BC80A02418BEE1640014C48B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF6C5613752B44D08ECE7661 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -368,6 +434,7 @@
 		};
 		BC80A02518BEE1640014C48B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF6C5613752B44D08ECE7661 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -438,6 +505,7 @@
 				BC80A02518BEE1640014C48B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BC80A02618BEE1640014C48B /* Build configuration list for PBXNativeTarget "CachingClientTests" */ = {
 			isa = XCConfigurationList;
@@ -446,6 +514,7 @@
 				BC80A02818BEE1640014C48B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

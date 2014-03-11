@@ -7,6 +7,7 @@
 //
 
 #import "CCAppDelegate.h"
+#import "CCMenuViewController.h"
 
 @implementation CCAppDelegate
 
@@ -14,7 +15,9 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
+    CCMenuViewController *vc = [[CCMenuViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self.window setRootViewController:nav];
     [self.window makeKeyAndVisible];
     return YES;
 }
