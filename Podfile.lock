@@ -1,12 +1,33 @@
 PODS:
+  - AFNetworking (2.2.0):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+    - AFNetworking/UIKit
+  - AFNetworking/NSURLConnection (2.2.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.2.0):
+    - AFNetworking/NSURLConnection
+  - AFNetworking/Reachability (2.2.0)
+  - AFNetworking/Security (2.2.0)
+  - AFNetworking/Serialization (2.2.0)
+  - AFNetworking/UIKit (2.2.0):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
   - SDWebImage (3.5.2):
     - SDWebImage/Core
   - SDWebImage/Core (3.5.2)
 
 DEPENDENCIES:
+  - AFNetworking
   - SDWebImage
 
 SPEC CHECKSUMS:
+  AFNetworking: e8cfd8f3fe3bfe19124a0cc63f4d45752d892a56
   SDWebImage: fe7ce01ae4e0a884d168f59c9dd82d35baf8429e
 
 COCOAPODS: 0.29.0

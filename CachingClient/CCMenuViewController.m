@@ -94,7 +94,8 @@
 #pragma mark UIImagePickerControllerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    UIImage *image = info[UIImagePickerControllerEditedImage];
+    UIImage *image = info[UIImagePickerControllerOriginalImage];
+    NSURL *imageURL = info[UIImagePickerControllerReferenceURL];
     NSString *imageMD5 = [self getPhotoUID:image];
     [[SDImageCache sharedImageCache] queryDiskCacheForKey:imageMD5 done:^(UIImage *image, SDImageCacheType cacheType) {
         if (!image) {
