@@ -24,6 +24,12 @@
     return self;
 }
 
+-(void)setThumbs:(NSArray *)thumbs
+{
+    _thumbs = thumbs;
+    [self.collectionView reloadData];
+}
+
 
 - (void)viewDidLoad
 {
@@ -32,7 +38,7 @@
     self.collectionView = [[UICollectionView alloc] initWithFrame:self.view.frame collectionViewLayout:self.collectionViewLayout];
     [self.collectionView setDelegate:self];
     [self.collectionView setDataSource:self];
-    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"PhotoCell"];
+    [self.collectionView registerClass:[CCPhotoCell class] forCellWithReuseIdentifier:@"PhotoCell"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -43,7 +49,7 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 10;
+    return [_thumbs count];
 }
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -53,10 +59,15 @@
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCell" forIndexPath:indexPath];
+    CCPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCell" forIndexPath:indexPath];
     cell.backgroundColor = [UIColor redColor];
-    
+    [cell addImage:[_thumbs objectAtIndex:indexPath.item]];
     return cell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"%@",indexPath);
 }
 
 

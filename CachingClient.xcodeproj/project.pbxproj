@@ -11,6 +11,8 @@
 		BC206BE118CA72B600BCE324 /* CCPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */; };
 		BC206BE418CA7CBD00BCE324 /* CCPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */; };
 		BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */; };
+		BC206BED18CFCC8F00BCE324 /* UIImage+ScalingMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BEC18CFCC8F00BCE324 /* UIImage+ScalingMethods.m */; };
+		BC206BF018CFCD9900BCE324 /* CCImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BEF18CFCD9900BCE324 /* CCImageManager.m */; };
 		BC809FFB18BEE1640014C48B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFA18BEE1640014C48B /* Foundation.framework */; };
 		BC809FFD18BEE1640014C48B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFC18BEE1640014C48B /* CoreGraphics.framework */; };
 		BC809FFF18BEE1640014C48B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC809FFE18BEE1640014C48B /* UIKit.framework */; };
@@ -44,6 +46,10 @@
 		BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotoCell.m; sourceTree = "<group>"; };
 		BC206BE518CA84CA00BCE324 /* CCPhotoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotoDetailViewController.h; sourceTree = "<group>"; };
 		BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotoDetailViewController.m; sourceTree = "<group>"; };
+		BC206BEB18CFCC8E00BCE324 /* UIImage+ScalingMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ScalingMethods.h"; sourceTree = "<group>"; };
+		BC206BEC18CFCC8F00BCE324 /* UIImage+ScalingMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ScalingMethods.m"; sourceTree = "<group>"; };
+		BC206BEE18CFCD9900BCE324 /* CCImageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCImageManager.h; sourceTree = "<group>"; };
+		BC206BEF18CFCD9900BCE324 /* CCImageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCImageManager.m; sourceTree = "<group>"; };
 		BC809FF718BEE1640014C48B /* CachingClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CachingClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC809FFA18BEE1640014C48B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BC809FFC18BEE1640014C48B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -131,8 +137,12 @@
 				BC80A00118BEE1640014C48B /* Supporting Files */,
 				BCBAC7F918CA50F900EAE334 /* CCMenuViewController.h */,
 				BCBAC7FA18CA50F900EAE334 /* CCMenuViewController.m */,
+				BC206BEE18CFCD9900BCE324 /* CCImageManager.h */,
+				BC206BEF18CFCD9900BCE324 /* CCImageManager.m */,
 				BC206BDF18CA72B600BCE324 /* CCPhotosViewController.h */,
 				BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */,
+				BC206BEB18CFCC8E00BCE324 /* UIImage+ScalingMethods.h */,
+				BC206BEC18CFCC8F00BCE324 /* UIImage+ScalingMethods.m */,
 				BC206BE518CA84CA00BCE324 /* CCPhotoDetailViewController.h */,
 				BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */,
 				BC206BE218CA7CBD00BCE324 /* CCPhotoCell.h */,
@@ -305,8 +315,10 @@
 				BC80A00718BEE1640014C48B /* main.m in Sources */,
 				BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */,
 				BC206BE118CA72B600BCE324 /* CCPhotosViewController.m in Sources */,
+				BC206BED18CFCC8F00BCE324 /* UIImage+ScalingMethods.m in Sources */,
 				BC206BE418CA7CBD00BCE324 /* CCPhotoCell.m in Sources */,
 				BCBAC7FB18CA50F900EAE334 /* CCMenuViewController.m in Sources */,
+				BC206BF018CFCD9900BCE324 /* CCImageManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

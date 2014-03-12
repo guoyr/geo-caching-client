@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define IMAGE_CELL_SIZE 76
+
 @interface CCMenuViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-
-
 
 @end

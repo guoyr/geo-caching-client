@@ -6,10 +6,12 @@
 //  Copyright (c) 2014 Robert Guo. All rights reserved.
 //
 
-#import <CommonCrypto/CommonDigest.h>
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "UIImage+ScalingMethods.h"
 #import "CCMenuViewController.h"
 #import "CCPhotosViewController.h"
-#import <SDWebImage/UIImageView+WebCache.h>
+#import "CCImageManager.h"
+
 
 @interface CCMenuViewController ()
 
@@ -66,7 +68,7 @@
     [self.picker setDelegate:self];
     
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-    [layout setItemSize:CGSizeMake(76,76)];
+    [layout setItemSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
     [layout setSectionInset:UIEdgeInsetsMake(3, 3, 3, 3)];
     [layout setScrollDirection:UICollectionViewScrollDirectionVertical];
     [layout setMinimumInteritemSpacing:3.f];
@@ -81,57 +83,31 @@
 -(void)uploadButtonPressed:(id)sender
 {
     [self presentViewController:self.picker animated:YES completion:^{
-        ;
+
     }];
 }
 
 -(void)viewButtonPressed:(id)sender
 {
-    
+    [self.viewer setThumbs:[[CCImageManager sharedInstance] getAllThumbs]];
     [self.navigationController pushViewController:self.viewer animated:YES];
 }
 
 #pragma mark UIImagePickerControllerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    UIImage *image = info[UIImagePickerControllerOriginalImage];
-    NSURL *imageURL = info[UIImagePickerControllerReferenceURL];
-    NSString *imageMD5 = [self getPhotoUID:image];
-    [[SDImageCache sharedImageCache] queryDiskCacheForKey:imageMD5 done:^(UIImage *image, SDImageCacheType cacheType) {
-        if (!image) {
-            [[SDImageCache sharedImageCache] storeImage:image forKey:imageMD5 toDisk:YES];
-        }
-    }];
     [self dismissViewControllerAnimated:YES completion:^{
-        ;
+        [[CCImageManager sharedInstance] addImageRecord:info];
     }];
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
--(void)uploadPhoto
-{
-    
-}
-
--(NSString *)getPhotoUID:(UIImage *)image
-{
-    NSData* data = UIImagePNGRepresentation(image);
-    
-    const void* src = [data bytes];
-    unsigned int len = (int)[data length];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(src, len, result);
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    
-    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-        [output appendFormat:@"%02x", result[i]];
-    
-    return output;
-}
 
 - (void)didReceiveMemoryWarning
 {
