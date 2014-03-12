@@ -11,5 +11,6 @@
 @interface CCPhotosViewController : UICollectionViewController
 
 @property (nonatomic, strong) NSArray *thumbs;
+@property (nonatomic, strong) NSArray *imageNames;
 
 @end

@@ -8,8 +8,11 @@
 
 #import "CCPhotosViewController.h"
 #import "CCPhotoCell.h"
+#import "CCPhotoDetailViewController.h"
 
 @interface CCPhotosViewController ()
+
+@property (nonatomic, strong) CCPhotoDetailViewController *detailVC;
 
 @end
 
@@ -28,6 +31,15 @@
 {
     _thumbs = thumbs;
     [self.collectionView reloadData];
+}
+
+-(CCPhotoDetailViewController *)detailVC
+{
+    if (!_detailVC) {
+        _detailVC = [[CCPhotoDetailViewController alloc] init];
+    }
+    
+    return _detailVC;
 }
 
 
@@ -67,7 +79,8 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"%@",indexPath);
+    [self.detailVC setImageNamed:self.imageNames[indexPath.item]];
+    [self.navigationController pushViewController:self.detailVC animated:YES];
 }
 
 

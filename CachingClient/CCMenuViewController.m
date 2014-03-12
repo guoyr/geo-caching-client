@@ -89,6 +89,7 @@
 
 -(void)viewButtonPressed:(id)sender
 {
+    [self.viewer setImageNames:[[CCImageManager sharedInstance] getAllImageNames]];
     [self.viewer setThumbs:[[CCImageManager sharedInstance] getAllThumbs]];
     [self.navigationController pushViewController:self.viewer animated:YES];
 }

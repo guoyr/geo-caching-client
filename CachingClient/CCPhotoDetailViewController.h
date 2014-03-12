@@ -10,4 +10,6 @@
 
 @interface CCPhotoDetailViewController : UIViewController
 
+-(void)setImageNamed:(NSString *)name;
+
 @end

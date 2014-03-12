@@ -10,6 +10,8 @@
 
 @interface CCPhotoDetailViewController ()
 
+@property (nonatomic, strong) UIImageView *imageView;
+
 @end
 
 @implementation CCPhotoDetailViewController
@@ -26,7 +28,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title = @"View Image detail";
+    UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    [self.view addGestureRecognizer:tapGR];
+    self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.imageView];
+    [self.imageView setBackgroundColor:[UIColor blueColor]];
     // Do any additional setup after loading the view.
+}
+
+-(void)viewTapped:(UITapGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        CGPoint location = [sender locationInView:self.view];
+        if (location.x < self.view.bounds.size.width / 2) {
+            // tapped on the left
+            NSLog(@"tapped on left");
+        } else {
+            //tapped on the right
+            NSLog(@"tapped on right");
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -35,6 +57,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)setImageNamed:(NSString *)name
+{
+    
+}
 /*
 #pragma mark - Navigation
 

@@ -55,9 +55,15 @@
 {
     NSMutableArray *imgArray = [[NSMutableArray alloc] initWithCapacity:[_imageThumbsInfoArray count]];
     for (NSString *imgName in _imageThumbsInfoArray) {
-        [imgArray addObject:[[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imgName]];
+        NSString *thumbName = [imgName stringByAppendingString:@"_thumb"];
+        [imgArray addObject:[[SDImageCache sharedImageCache] imageFromDiskCacheForKey:thumbName]];
     }
     return [NSArray arrayWithArray:imgArray];
+}
+
+-(NSArray *)getAllImageNames
+{
+    return [NSArray arrayWithArray:_imageThumbsInfoArray];
 }
 
 
@@ -94,11 +100,11 @@
 -(void)addToThumbsCacheImage:(UIImage *)image Name:(NSString *)name
 {
     
-    name = [name stringByAppendingString:@"_thumb"];
     if (![_imageThumbsInfoArray containsObject:name]) {
-        image = [UIImage imageWithImage:image scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
-        [[SDImageCache sharedImageCache] storeImage:image forKey:name];
         [self.imageThumbsInfoArray addObject:name];
+        image = [UIImage imageWithImage:image scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
+        name = [name stringByAppendingString:@"_thumb"];
+        [[SDImageCache sharedImageCache] storeImage:image forKey:name];
         NSLog(@"added image to thumbs");
     }
     NSLog(@"%lu",(unsigned long)[self.imageThumbsInfoArray count]);
@@ -137,7 +143,7 @@
     UIImage *image = imageInfo[UIImagePickerControllerOriginalImage];
     NSString *uid = [self getPhotoUID:image];
     NSString *thumbsUID = [uid stringByAppendingString:@"_thumb"];
-    [_imageThumbsInfoArray removeObject:thumbsUID];
+    [_imageThumbsInfoArray removeObject:uid];
     [[SDImageCache sharedImageCache] removeImageForKey:thumbsUID fromDisk:YES];
     if ([_cachedImageInfoArray containsObject:uid]) {
         [_cachedImageInfoArray removeObject:uid];
