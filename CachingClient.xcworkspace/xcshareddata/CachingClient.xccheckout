@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BE887976-51A9-4423-9DEF-17516951B6DE</string>
+	<key>IDESourceControlProjectName</key>
+	<string>CachingClient</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>0724A1AB-11C5-4DD0-B554-CEF7DFAF355B</key>
+		<string>ssh://github.com/guoyr/geo-caching-client.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CachingClient.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>0724A1AB-11C5-4DD0-B554-CEF7DFAF355B</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/guoyr/geo-caching-client.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>0724A1AB-11C5-4DD0-B554-CEF7DFAF355B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>0724A1AB-11C5-4DD0-B554-CEF7DFAF355B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CachingClient</string>
+		</dict>
+	</array>
+</dict>
+</plist>

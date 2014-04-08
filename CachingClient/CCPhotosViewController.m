@@ -79,7 +79,7 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.detailVC setImageNamed:self.imageNames[indexPath.item]];
+    [self.detailVC setCurIndex:(int)indexPath.item];
     [self.navigationController pushViewController:self.detailVC animated:YES];
 }
 

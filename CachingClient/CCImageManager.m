@@ -13,8 +13,10 @@
 #import "UIImage+ScalingMethods.h"
 #import "CCMenuViewController.h"
 
-#define SERVER_UPLOAD_ADDR @"west-5412.cloudapp.net/upload"
+#define SERVER_UPLOAD_ADDR @"west-5412.cloudapp.net/upload/"
 #define SERVER_REMOVE_ADDR @"west-5412.cloudapp.net/remove/"
+
+#define LOCAL_CACHE_SIZE 2
 
 @interface CCImageManager()
 
@@ -66,6 +68,10 @@
     return [NSArray arrayWithArray:_imageThumbsInfoArray];
 }
 
+-(NSArray *)getCachedImageNames
+{
+    return [NSArray arrayWithArray:_cachedImageInfoArray];
+}
 
 -(NSString *)getPhotoUID:(UIImage *)image
 {
@@ -91,12 +97,15 @@
 -(void)addToCacheImage:(UIImage *)image Name:(NSString *)name
 {
     if (![_cachedImageInfoArray containsObject:name]) {
+        //TODO: logic to update the local cache
+        
         [[SDImageCache sharedImageCache] storeImage:image forKey:name toDisk:YES];
         [self.cachedImageInfoArray addObject:name];
     }
 }
 
 // called when a new image is added by the client
+// takes care of adding _thumb to the image name
 -(void)addToThumbsCacheImage:(UIImage *)image Name:(NSString *)name
 {
     
@@ -118,6 +127,7 @@
     NSURL *imageURL = imageInfo[UIImagePickerControllerReferenceURL];
     NSString *uid = [self getPhotoUID:image];
     [self addToThumbsCacheImage:image Name:uid];
+    [self addToCacheImage:image Name:uid];
     // add image to local cache when viewed, not when uploaded.
     
         

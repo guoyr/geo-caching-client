@@ -10,6 +10,6 @@
 
 @interface CCPhotoDetailViewController : UIViewController
 
--(void)setImageNamed:(NSString *)name;
+@property (nonatomic, assign) int curIndex;
 
 @end

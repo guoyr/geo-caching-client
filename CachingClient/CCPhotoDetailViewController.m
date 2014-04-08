@@ -7,12 +7,18 @@
 //
 
 #import "CCPhotoDetailViewController.h"
+#import "CCImageManager.h"
+#import <SDImageCache.h>
+#import <AFNetworking/AFNetworking.h>
 
 @interface CCPhotoDetailViewController ()
 
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) NSArray *imageNames;
 
 @end
+
+#define SERVER_DOWNLOAD_ADDR @"west-5412.cloudapp.net/download/"
 
 @implementation CCPhotoDetailViewController
 
@@ -37,17 +43,48 @@
     // Do any additional setup after loading the view.
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.imageNames = [[CCImageManager sharedInstance] getCachedImageNames];
+    
+}
+
+-(void)showImage:(NSString *)imageName
+{
+    if ([_imageNames containsObject:imageName]) {
+        [self.imageView setImage:[[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imageName]];
+    } else {
+        // doesn't exist locally, have to get it from server;
+        NSURL *URL = [NSURL URLWithString:SERVER_DOWNLOAD_ADDR];
+        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+        
+        AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSLog(@"Response: %@", responseObject);
+            _imageView.image = responseObject;
+            //TODO: put caching logic here
+            [[SDImageCache sharedImageCache] storeImage:responseObject forKey:imageName];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Image error: %@", error);
+        }];
+        [requestOperation start];
+    }
+}
+
 -(void)viewTapped:(UITapGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateEnded) {
         CGPoint location = [sender locationInView:self.view];
         if (location.x < self.view.bounds.size.width / 2) {
             // tapped on the left
-            NSLog(@"tapped on left");
+            _curIndex--;
         } else {
             //tapped on the right
-            NSLog(@"tapped on right");
+            _curIndex++;
         }
+        [self showImage:_imageNames[_curIndex]];
     }
 }
 
@@ -55,11 +92,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
--(void)setImageNamed:(NSString *)name
-{
-    
 }
 /*
 #pragma mark - Navigation

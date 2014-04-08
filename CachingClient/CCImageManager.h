@@ -15,4 +15,5 @@
 -(void)removeImageRecord:(NSDictionary *)imageInfo;
 -(NSArray *)getAllThumbs;
 -(NSArray *)getAllImageNames;
+-(NSArray *)getCachedImageNames;
 @end
