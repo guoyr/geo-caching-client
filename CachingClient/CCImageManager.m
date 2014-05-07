@@ -13,10 +13,9 @@
 #import "UIImage+ScalingMethods.h"
 #import "CCMenuViewController.h"
 
-#define SERVER_UPLOAD_ADDR @"west-5412.cloudapp.net/upload/"
-#define SERVER_REMOVE_ADDR @"west-5412.cloudapp.net/remove/"
+//#define SERVER_UPLOAD_ADDR @"http://west-5412.cloudapp.net:8666/image/"
+#define SERVER_UPLOAD_ADDR @"http://localhost:8666/image/"
 
-#define LOCAL_CACHE_SIZE 2
 
 @interface CCImageManager()
 
@@ -30,7 +29,7 @@
 -(NSMutableArray *)imageThumbsInfoArray
 {
     if (!_imageThumbsInfoArray) {
-        _imageThumbsInfoArray = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"imageList"]];
+        _imageThumbsInfoArray = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:IMAGE_THUMBS_KEY]];
     }
     return _imageThumbsInfoArray;
 }
@@ -38,7 +37,7 @@
 -(NSMutableArray *)cachedImageInfoArray
 {
     if (!_cachedImageInfoArray) {
-        _cachedImageInfoArray = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"cachedImageList"]];
+        _cachedImageInfoArray = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:IMAGE_FULL_KEY]];
     }
     
     return _cachedImageInfoArray;
@@ -101,6 +100,7 @@
         
         [[SDImageCache sharedImageCache] storeImage:image forKey:name toDisk:YES];
         [self.cachedImageInfoArray addObject:name];
+        
     }
 }
 
@@ -109,42 +109,49 @@
 -(void)addToThumbsCacheImage:(UIImage *)image Name:(NSString *)name
 {
     
-    if (![_imageThumbsInfoArray containsObject:name]) {
-        [self.imageThumbsInfoArray addObject:name];
-        image = [UIImage imageWithImage:image scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
-        name = [name stringByAppendingString:@"_thumb"];
-        [[SDImageCache sharedImageCache] storeImage:image forKey:name];
-        NSLog(@"added image to thumbs");
-    }
+    [self.imageThumbsInfoArray addObject:name];
+    image = [UIImage imageWithImage:image scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
+    name = [name stringByAppendingString:@"_thumb"];
+    [[SDImageCache sharedImageCache] storeImage:image forKey:name];
+
     NSLog(@"%lu",(unsigned long)[self.imageThumbsInfoArray count]);
 
 }
 
+-(BOOL)imageExists:(NSString *)imageName
+{
+    return [_imageThumbsInfoArray containsObject:imageName];
+}
+
 -(void)addImageRecord:(NSDictionary *)imageInfo
 {
-    NSLog(@"in add image record");
     UIImage *image = imageInfo[UIImagePickerControllerOriginalImage];
-    NSURL *imageURL = imageInfo[UIImagePickerControllerReferenceURL];
     NSString *uid = [self getPhotoUID:image];
+    
+    if ([self imageExists:uid]) {
+        return;
+    }
+    
     [self addToThumbsCacheImage:image Name:uid];
-    [self addToCacheImage:image Name:uid];
+
+    if ([_cachedImageInfoArray count] < LOCAL_CACHE_SIZE) {
+        [self addToCacheImage:image Name:uid];
+
+    }
     // add image to local cache when viewed, not when uploaded.
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     
-        
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    
-    NSURL *URL = [NSURL URLWithString:SERVER_UPLOAD_ADDR];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    
-    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithRequest:request fromFile:imageURL progress:nil completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Success: %@ %@", response, responseObject);
-        }
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
+    //TODO: add closest server
+    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,DEVICE_UID_KEY:[deviceID UUIDString]};
+    [manager POST:SERVER_UPLOAD_ADDR parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFormData:imageData name:uid];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Success: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
     }];
-//        [uploadTask resume];
 }
 
 // called when removing an image from the client
@@ -160,7 +167,7 @@
         [[SDImageCache sharedImageCache] removeImageForKey:uid fromDisk:YES];
     }
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *parameters = @{@"foo": @"bar"};
+    NSDictionary *parameters = @{@"image_uid": @"bar"};
 //    [manager POST:SERVER_REMOVE_ADDR parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);
 //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

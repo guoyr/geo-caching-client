@@ -7,6 +7,7 @@
 //
 
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <AFNetworking.h>
 #import "UIImage+ScalingMethods.h"
 #import "CCMenuViewController.h"
 #import "CCPhotosViewController.h"
@@ -19,6 +20,7 @@
 @property (nonatomic, strong) UIButton *viewButton;
 @property (nonatomic, strong) UIImagePickerController *picker;
 @property (nonatomic, strong) CCPhotosViewController *viewer;
+@property (nonatomic, strong) UIButton *resetButton;
 
 @end
 
@@ -60,7 +62,10 @@
 
     [self.viewButton addTarget:self action:@selector(viewButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
-
+    self.resetButton = [[UIButton alloc] initWithFrame:CGRectMake(300, 488, 20, 20)];
+    [self.resetButton setBackgroundColor:[UIColor redColor]];
+    [self.resetButton addTarget:self action:@selector(reset:) forControlEvents:UIControlEventTouchUpInside];
+    
     self.picker = [[UIImagePickerController alloc] init];
     [self.picker.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
     [self.picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
@@ -78,12 +83,22 @@
     
     [self.view addSubview:self.uploadButton];
     [self.view addSubview:self.viewButton];
+    [self.view addSubview:self.resetButton];
+}
+
+-(void)reset:(id)sender
+{
+    NSLog(@"reset everything");
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    [d removeObjectForKey:IMAGE_FULL_KEY];
+    [d removeObjectForKey:IMAGE_THUMBS_KEY];
+    [[SDImageCache sharedImageCache] clearDisk];
+    [[SDImageCache sharedImageCache] clearMemory];
 }
 
 -(void)uploadButtonPressed:(id)sender
 {
     [self presentViewController:self.picker animated:YES completion:^{
-
     }];
 }
 
