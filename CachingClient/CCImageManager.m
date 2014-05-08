@@ -13,8 +13,8 @@
 #import "UIImage+ScalingMethods.h"
 #import "CCMenuViewController.h"
 
-//#define SERVER_UPLOAD_ADDR @"http://west-5412.cloudapp.net:8666/image/"
-#define SERVER_UPLOAD_ADDR @"http://localhost:8666/image/"
+#define SERVER_UPLOAD_ADDR @"http://west-5412.cloudapp.net:8666/image/"
+//#define SERVER_UPLOAD_ADDR @"http://localhost:8666/image/"
 
 
 @interface CCImageManager()
@@ -142,7 +142,7 @@
     NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
     //TODO: add closest server
     NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
-    NSLog(@"image id: %@,  user id: %@", uid, [deviceID UUIDString]);
+    NSLog(@"http://west-5412.cloudapp.net:8666/image/?image_uid_key=%@&user_id=%@&is_client=1", uid, [deviceID UUIDString]);
     [manager POST:SERVER_UPLOAD_ADDR parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
