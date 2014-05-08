@@ -12,14 +12,13 @@
 #import "CCMenuViewController.h"
 #import "CCPhotosViewController.h"
 #import "CCImageManager.h"
-
+#import "CCSettingsTableViewController.h"
 
 @interface CCMenuViewController ()
 
 @property (nonatomic, strong) UIButton *uploadButton;
 @property (nonatomic, strong) UIButton *viewButton;
 @property (nonatomic, strong) UIImagePickerController *picker;
-@property (nonatomic, strong) CCPhotosViewController *viewer;
 @property (nonatomic, strong) UIButton *resetButton;
 
 @end
@@ -40,8 +39,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.navigationItem setTitle:@"Geo-caching Client"];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackOpaque;
     [self.navigationController.navigationBar setTintColor:[UIColor lightGrayColor]];
+    self.navigationController.navigationBar.translucent = NO;
     [self.view setBackgroundColor:[UIColor blackColor]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
@@ -62,25 +62,17 @@
 
     [self.viewButton addTarget:self action:@selector(viewButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
-    self.resetButton = [[UIButton alloc] initWithFrame:CGRectMake(300, 488, 20, 20)];
-    [self.resetButton setBackgroundColor:[UIColor redColor]];
+    self.resetButton = [[UIButton alloc] initWithFrame:CGRectMake(240, 458, 80, 40)];
+    [self.resetButton setBackgroundColor:[UIColor darkGrayColor]];
+    [self.resetButton setTitle:@"Settings" forState:UIControlStateNormal];
     [self.resetButton addTarget:self action:@selector(reset:) forControlEvents:UIControlEventTouchUpInside];
-    
+    [self.resetButton.layer setCornerRadius:5.0];
     self.picker = [[UIImagePickerController alloc] init];
     [self.picker.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
     [self.picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     [self.picker.navigationBar setTintColor:[UIColor lightGrayColor]];
     [self.picker setDelegate:self];
-    
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-    [layout setItemSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
-    [layout setSectionInset:UIEdgeInsetsMake(3, 3, 3, 3)];
-    [layout setScrollDirection:UICollectionViewScrollDirectionVertical];
-    [layout setMinimumInteritemSpacing:3.f];
-    [layout setMinimumLineSpacing:3.f];
-    
-    self.viewer = [[CCPhotosViewController alloc] initWithCollectionViewLayout:layout];
-    
+
     [self.view addSubview:self.uploadButton];
     [self.view addSubview:self.viewButton];
     [self.view addSubview:self.resetButton];
@@ -88,12 +80,10 @@
 
 -(void)reset:(id)sender
 {
-    NSLog(@"reset everything");
-    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-    [d removeObjectForKey:IMAGE_FULL_KEY];
-    [d removeObjectForKey:IMAGE_THUMBS_KEY];
-    [[SDImageCache sharedImageCache] clearDisk];
-    [[SDImageCache sharedImageCache] clearMemory];
+
+    UIStoryboard *tableViewStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
+    CCSettingsTableViewController *vc = [tableViewStoryboard instantiateViewControllerWithIdentifier:@"settingsVC"];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 -(void)uploadButtonPressed:(id)sender
@@ -104,9 +94,18 @@
 
 -(void)viewButtonPressed:(id)sender
 {
-    [self.viewer setImageNames:[[CCImageManager sharedInstance] getAllImageNames]];
-    [self.viewer setThumbs:[[CCImageManager sharedInstance] getAllThumbs]];
-    [self.navigationController pushViewController:self.viewer animated:YES];
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+    [layout setItemSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
+    [layout setSectionInset:UIEdgeInsetsMake(3, 3, 3, 3)];
+    [layout setScrollDirection:UICollectionViewScrollDirectionVertical];
+    [layout setMinimumInteritemSpacing:3.f];
+    [layout setMinimumLineSpacing:3.f];
+    
+    CCPhotosViewController *viewer = [[CCPhotosViewController alloc] initWithCollectionViewLayout:layout];
+
+    [viewer setImageNames:[[CCImageManager sharedInstance] getAllImageNames]];
+    [viewer setThumbs:[[CCImageManager sharedInstance] getAllThumbs]];
+    [self.navigationController pushViewController:viewer animated:YES];
 }
 
 #pragma mark UIImagePickerControllerDelegate

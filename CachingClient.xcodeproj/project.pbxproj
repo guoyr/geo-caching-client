@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		332122A7010E4C1CAAE5C7B9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DEC2EB20DA5497EB9827620 /* libPods.a */; };
+		BC170C1C191B323600E5B7C7 /* CCSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC170C1A191B323600E5B7C7 /* CCSettingsTableViewController.m */; };
+		BC170C1F191B34E200E5B7C7 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC170C1E191B34E200E5B7C7 /* Storyboard.storyboard */; };
 		BC206BE118CA72B600BCE324 /* CCPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */; };
 		BC206BE418CA7CBD00BCE324 /* CCPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE318CA7CBD00BCE324 /* CCPhotoCell.m */; };
 		BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC206BE618CA84CA00BCE324 /* CCPhotoDetailViewController.m */; };
@@ -40,6 +42,9 @@
 
 /* Begin PBXFileReference section */
 		9DEC2EB20DA5497EB9827620 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC170C19191B323600E5B7C7 /* CCSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCSettingsTableViewController.h; sourceTree = "<group>"; };
+		BC170C1A191B323600E5B7C7 /* CCSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCSettingsTableViewController.m; sourceTree = "<group>"; };
+		BC170C1E191B34E200E5B7C7 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		BC206BDF18CA72B600BCE324 /* CCPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotosViewController.h; sourceTree = "<group>"; };
 		BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhotosViewController.m; sourceTree = "<group>"; };
 		BC206BE218CA7CBD00BCE324 /* CCPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhotoCell.h; sourceTree = "<group>"; };
@@ -139,6 +144,9 @@
 				BCBAC7FA18CA50F900EAE334 /* CCMenuViewController.m */,
 				BC206BEE18CFCD9900BCE324 /* CCImageManager.h */,
 				BC206BEF18CFCD9900BCE324 /* CCImageManager.m */,
+				BC170C19191B323600E5B7C7 /* CCSettingsTableViewController.h */,
+				BC170C1A191B323600E5B7C7 /* CCSettingsTableViewController.m */,
+				BC170C1E191B34E200E5B7C7 /* Storyboard.storyboard */,
 				BC206BDF18CA72B600BCE324 /* CCPhotosViewController.h */,
 				BC206BE018CA72B600BCE324 /* CCPhotosViewController.m */,
 				BC206BEB18CFCC8E00BCE324 /* UIImage+ScalingMethods.h */,
@@ -258,6 +266,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC170C1F191B34E200E5B7C7 /* Storyboard.storyboard in Resources */,
 				BC80A00518BEE1640014C48B /* InfoPlist.strings in Resources */,
 				BC80A00D18BEE1640014C48B /* Images.xcassets in Resources */,
 			);
@@ -311,6 +320,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC170C1C191B323600E5B7C7 /* CCSettingsTableViewController.m in Sources */,
 				BC80A00B18BEE1640014C48B /* CCAppDelegate.m in Sources */,
 				BC80A00718BEE1640014C48B /* main.m in Sources */,
 				BC206BE718CA84CA00BCE324 /* CCPhotoDetailViewController.m in Sources */,

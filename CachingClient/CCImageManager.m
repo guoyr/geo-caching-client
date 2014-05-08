@@ -19,9 +19,6 @@
 
 @interface CCImageManager()
 
-@property (nonatomic, strong) NSMutableArray *imageThumbsInfoArray;
-@property (nonatomic, strong) NSMutableArray *cachedImageInfoArray;
-
 @end
 
 @implementation CCImageManager
@@ -145,6 +142,7 @@
     NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
     //TODO: add closest server
     NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
+    NSLog(@"image id: %@,  user id: %@", uid, [deviceID UUIDString]);
     [manager POST:SERVER_UPLOAD_ADDR parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
