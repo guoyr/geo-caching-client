@@ -144,7 +144,7 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
     //TODO: add closest server
-    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,DEVICE_UID_KEY:[deviceID UUIDString]};
+    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
     [manager POST:SERVER_UPLOAD_ADDR parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {

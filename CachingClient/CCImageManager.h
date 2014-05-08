@@ -14,6 +14,7 @@
 
 #define IMAGE_UID_KEY @"image_uid_key"
 #define DEVICE_UID_KEY @"device_uid_key"
+#define USER_ID_KEY @"user_id"
 
 @interface CCImageManager : NSObject
 
