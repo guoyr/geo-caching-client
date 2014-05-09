@@ -23,6 +23,14 @@
 
 @implementation CCImageManager
 
+-(SDImageCache *)imageCache
+{
+    if (!_imageCache) {
+        _imageCache = [SDImageCache sharedImageCache];
+    }
+    return _imageCache;
+}
+
 -(NSMutableArray *)imageThumbsInfoArray
 {
     if (!_imageThumbsInfoArray) {
@@ -34,10 +42,65 @@
 -(NSMutableArray *)cachedImageInfoArray
 {
     if (!_cachedImageInfoArray) {
-        _cachedImageInfoArray = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:IMAGE_FULL_KEY]];
+        _cachedImageInfoArray = [[NSMutableArray alloc] init];
     }
     
     return _cachedImageInfoArray;
+}
+
+-(void)saveImageThumb:(UIImage *)newImage named:(NSString *)name
+{
+    [[SDImageCache sharedImageCache] storeImage:newImage forKey:[name stringByAppendingString:@"_thumb"]];
+    
+    NSData *imageData = UIImagePNGRepresentation(newImage);
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+
+    NSString *imagePath =[documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",name]];
+    if (![imageData writeToFile:imagePath atomically:NO]) {
+        NSLog((@"Failed to cache image data to disk"));
+    }
+}
+
+-(void)removeAllImages
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *directory = [paths objectAtIndex:0];
+    
+    NSError *error = nil;
+    for (NSString *file in [fm contentsOfDirectoryAtPath:directory error:&error]) {
+        BOOL success = [fm removeItemAtPath:[directory stringByAppendingPathComponent:file] error:&error];
+        if (!success || error) {
+            // it failed.
+        }
+    }
+}
+
+-(UIImage *)getImageThumbNamed:(NSString *)name
+{
+    UIImage *img;
+    if (!(img = [[SDImageCache sharedImageCache] imageFromMemoryCacheForKey:[name stringByAppendingString:@"_thumb"]])) {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *directory = [paths objectAtIndex:0];
+        NSString *imageName = [NSString stringWithFormat:@"%@.png",name];
+        
+        img = [UIImage imageWithContentsOfFile:[directory stringByAppendingPathComponent:imageName]];
+        img = [UIImage imageWithImage:img scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
+        
+        [[SDImageCache sharedImageCache] storeImage:img forKey:[name stringByAppendingString:@"_thumb"]];
+    }
+    
+    return img ;
+}
+
+-(void)save
+{
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    [d setObject:self.imageThumbsInfoArray forKey:IMAGE_THUMBS_KEY];
+    
 }
 
 + (id)sharedInstance {
@@ -51,22 +114,22 @@
 
 -(NSArray *)getAllThumbs
 {
-    NSMutableArray *imgArray = [[NSMutableArray alloc] initWithCapacity:[_imageThumbsInfoArray count]];
-    for (NSString *imgName in _imageThumbsInfoArray) {
-        NSString *thumbName = [imgName stringByAppendingString:@"_thumb"];
-        [imgArray addObject:[[SDImageCache sharedImageCache] imageFromDiskCacheForKey:thumbName]];
+    NSMutableArray *imgArray = [[NSMutableArray alloc] initWithCapacity:[self.imageThumbsInfoArray count]];
+    for (NSString *imgName in self.imageThumbsInfoArray) {
+
+        [imgArray addObject:[self getImageThumbNamed:imgName]];
     }
     return [NSArray arrayWithArray:imgArray];
 }
 
 -(NSArray *)getAllImageNames
 {
-    return [NSArray arrayWithArray:_imageThumbsInfoArray];
+    return [NSArray arrayWithArray:self.imageThumbsInfoArray];
 }
 
 -(NSArray *)getCachedImageNames
 {
-    return [NSArray arrayWithArray:_cachedImageInfoArray];
+    return [NSArray arrayWithArray:self.cachedImageInfoArray];
 }
 
 -(NSString *)getPhotoUID:(UIImage *)image
@@ -92,10 +155,10 @@
 // called when an image is prefetched
 -(void)addToCacheImage:(UIImage *)image Name:(NSString *)name
 {
-    if (![_cachedImageInfoArray containsObject:name]) {
+    if (![self.cachedImageInfoArray containsObject:name]) {
         //TODO: logic to update the local cache
         
-        [[SDImageCache sharedImageCache] storeImage:image forKey:name toDisk:YES];
+        [self.imageCache storeImage:image forKey:name];
         [self.cachedImageInfoArray addObject:name];
         
     }
@@ -108,16 +171,15 @@
     
     [self.imageThumbsInfoArray addObject:name];
     image = [UIImage imageWithImage:image scaledToFillSize:CGSizeMake(IMAGE_CELL_SIZE, IMAGE_CELL_SIZE)];
-    name = [name stringByAppendingString:@"_thumb"];
-    [[SDImageCache sharedImageCache] storeImage:image forKey:name];
+    [self saveImageThumb:image named:name];
 
-    NSLog(@"%lu",(unsigned long)[self.imageThumbsInfoArray count]);
+    NSLog(@"image thumbs list length: %lu",(unsigned long)[self.imageThumbsInfoArray count]);
 
 }
 
 -(BOOL)imageExists:(NSString *)imageName
 {
-    return [_imageThumbsInfoArray containsObject:imageName];
+    return [self.imageThumbsInfoArray containsObject:imageName];
 }
 
 -(void)addImageRecord:(NSDictionary *)imageInfo
@@ -126,51 +188,110 @@
     NSString *uid = [self getPhotoUID:image];
     
     if ([self imageExists:uid]) {
+        NSLog(@"image already exists, not added");
         return;
     }
     
+    [self removeLRUimageIfNeeded];
+    
     [self addToThumbsCacheImage:image Name:uid];
-
-    if ([_cachedImageInfoArray count] < LOCAL_CACHE_SIZE) {
-        [self addToCacheImage:image Name:uid];
-
-    }
-    // add image to local cache when viewed, not when uploaded.
+    [self addToCacheImage:image Name:uid];
+    
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
+    
+    
     //TODO: add closest server
-    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
-    NSLog(@"http://west-5412.cloudapp.net:8666/image/?image_uid_key=%@&user_id=%@&is_client=1", uid, [deviceID UUIDString]);
-    [manager POST:SERVER_UPLOAD_ADDR parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFormData:imageData name:uid];
-    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Success: %@", responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-}
 
-// called when removing an image from the client
--(void)removeImageRecord:(NSDictionary *)imageInfo
-{
-    UIImage *image = imageInfo[UIImagePickerControllerOriginalImage];
-    NSString *uid = [self getPhotoUID:image];
-    NSString *thumbsUID = [uid stringByAppendingString:@"_thumb"];
-    [_imageThumbsInfoArray removeObject:uid];
-    [[SDImageCache sharedImageCache] removeImageForKey:thumbsUID fromDisk:YES];
-    if ([_cachedImageInfoArray containsObject:uid]) {
-        [_cachedImageInfoArray removeObject:uid];
-        [[SDImageCache sharedImageCache] removeImageForKey:uid fromDisk:YES];
-    }
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *parameters = @{@"image_uid": @"bar"};
-//    [manager POST:SERVER_REMOVE_ADDR parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"JSON: %@", responseObject);
+    NSArray *info = [self getClientLocation];
+    float eLatency = [(NSNumber *)info[0] floatValue];
+    float wLatency = [(NSNumber *)info[1] floatValue];
+    NSString *serverAddr = info[2];
+    
+    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
+
+    NSLog(@"http://west-5412.cloudapp.net:8666/image/?image_uid_key=%@&user_id=%@&is_client=1", uid, [deviceID UUIDString]);
+
+//    [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+//        [formData appendPartWithFormData:imageData name:uid];
+//    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"Success: %@", responseObject);
 //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //        NSLog(@"Error: %@", error);
 //    }];
+}
+
+-(void)removeLRUimageIfNeeded
+{
+    NSInteger cacheSize = [[NSUserDefaults standardUserDefaults] integerForKey:CACHE_SIZE_KEY];
+    if (self.cachedImageInfoArray.count >= cacheSize) {
+        NSString *imgName = self.cachedImageInfoArray[0];
+        [self.cachedImageInfoArray removeObjectAtIndex:0];
+        [self.imageCache removeImageForKey:imgName];
+    }
+}
+
+-(void)addFetchedImageToCache:(UIImage *)image name:(NSString *)name
+{
+    [self removeLRUimageIfNeeded]; // caching logic
+    [self.imageCache storeImage:image forKey:name];
+    [self.cachedImageInfoArray addObject:name];
+    
+}
+
+-(void)addImageReadRecord:(NSString *)imageName
+{
+    // move this image to last index
+    [self.cachedImageInfoArray removeObject:imageName];
+    [self.cachedImageInfoArray addObject:imageName];
+}
+
+-(NSArray *)getClientLocation
+{
+    NSInteger locationIndex = [[NSUserDefaults standardUserDefaults] integerForKey:SERVER_LOCATION_KEY];
+    NSString *location;
+    float latency_west;
+    float latency_east;
+    
+    int precision = 10000;
+    float rand1 = (arc4random() % precision) / (float)precision;
+    float rand2 = (arc4random() % precision) / (float)precision;
+    
+    NSString *eastLoc = @"http://east-5412.cloudapp.net/image/";
+    NSString *westLoc = @"http://west-5412.cloudapp.net/image/";
+    
+    switch (locationIndex) {
+        case CENTRAL_CLIENT:
+            latency_west = rand1 * 100 + 50;
+            latency_east = rand2 * 100 + 50;
+            break;
+        case EAST_CLIENT:
+            latency_east = rand1 * 20 + 20;
+            latency_west = latency_east + rand2 * 100 + 100;
+            break;
+        case WEST_CLIENT:
+            latency_west = rand1 * 20 + 20;
+            latency_east = latency_east + rand2 * 100 + 100;
+            break;
+        case ANTARCTICA_CLIENT:
+            latency_west = rand1 * 1000 + 1000;
+            latency_east = rand2 * 1000 + 1000;
+            break;
+        case NONE_CLIENT:
+            location = @"http://localhost/image/";
+            latency_east = 0;
+            latency_west = 0;
+            break;
+        default:
+            break;
+    }
+    if (!location) {
+        location = latency_east < latency_west ? eastLoc : westLoc;
+    }
+    
+    return @[[NSNumber numberWithFloat:latency_east], [NSNumber numberWithFloat:latency_west], location];
 }
 
 @end

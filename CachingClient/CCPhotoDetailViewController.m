@@ -18,7 +18,6 @@
 
 @end
 
-#define SERVER_DOWNLOAD_ADDR @"west-5412.cloudapp.net/download/"
 
 @implementation CCPhotoDetailViewController
 
@@ -38,8 +37,9 @@
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [self.view addGestureRecognizer:tapGR];
     self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.view addSubview:self.imageView];
-    [self.imageView setBackgroundColor:[UIColor blueColor]];
+    [self.imageView setBackgroundColor:[UIColor blackColor]];
     // Do any additional setup after loading the view.
 }
 
@@ -50,26 +50,44 @@
     
 }
 
--(void)showImage:(NSString *)imageName
+
+-(void)showImage
 {
-    if ([_imageNames containsObject:imageName]) {
-        [self.imageView setImage:[[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imageName]];
-    } else {
-        // doesn't exist locally, have to get it from server;
-        NSURL *URL = [NSURL URLWithString:SERVER_DOWNLOAD_ADDR];
-        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    if (self.curIndex < 0 || self.curIndex >= self.imageNames.count) {
+        return;
+    }
+    NSString *imageName = self.imageNames[self.curIndex];
+    
+    CCImageManager *m = [CCImageManager sharedInstance];
+    if ([m.cachedImageInfoArray containsObject:imageName]) {
+        NSLog(@"image exists locally");
+        [m addImageReadRecord:imageName];
+        UIImage *image = [m.imageCache imageFromMemoryCacheForKey:imageName];
         
-        AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
-        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSLog(@"Response: %@", responseObject);
+        [self.imageView setImage:image];
+
+        
+    } else {
+        NSLog(@"image doesn't exist locally");
+        // doesn't exist locally, have to get it from server;
+        NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
+
+        NSArray *info = [m getClientLocation];
+        float eLatency = [(NSNumber *)info[0] floatValue];
+        float wLatency = [(NSNumber *)info[1] floatValue];
+        NSString *serverAddr = info[3];
+        
+        NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString]};
+
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager GET:serverAddr parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
             _imageView.image = responseObject;
-            //TODO: put caching logic here
-            [[SDImageCache sharedImageCache] storeImage:responseObject forKey:imageName];
+            [m addFetchedImageToCache:responseObject name:imageName];
+
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Image error: %@", error);
+            NSLog(@"Error: %@", error);
         }];
-        [requestOperation start];
     }
 }
 
@@ -84,8 +102,14 @@
             //tapped on the right
             _curIndex++;
         }
-        [self showImage:_imageNames[_curIndex]];
+        [self showImage];
     }
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self showImage];
 }
 
 - (void)didReceiveMemoryWarning

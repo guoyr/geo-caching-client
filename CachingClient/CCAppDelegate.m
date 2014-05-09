@@ -8,7 +8,7 @@
 
 #import "CCAppDelegate.h"
 #import "CCMenuViewController.h"
-
+#import "CCImageManager.h"
 @implementation CCAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -19,6 +19,20 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     [self.window setRootViewController:nav];
     [self.window makeKeyAndVisible];
+    
+    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+    if (![d objectForKey:SERVER_LOCATION_KEY]) {
+        [d setObject:@"http://localhost" forKey:SERVER_LOCATION_KEY];
+    }
+    
+    if (![d integerForKey:CACHE_LIFE_KEY]) {
+        [d setInteger:86400 forKey:CACHE_LIFE_KEY];
+    }
+    
+    if (![d integerForKey:CACHE_SIZE_KEY]) {
+        [d setInteger:2 forKey:CACHE_SIZE_KEY];
+    }
+    
     return YES;
 }
 
@@ -32,6 +46,9 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    NSLog(@"saved");
+    [[CCImageManager sharedInstance] save];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

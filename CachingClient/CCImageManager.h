@@ -5,6 +5,7 @@
 //  Created by Robert Guo on 3/11/14.
 //  Copyright (c) 2014 Robert Guo. All rights reserved.
 //
+@class SDImageCache;
 
 #import <Foundation/Foundation.h>
 
@@ -16,8 +17,18 @@
 #define DEVICE_UID_KEY @"device_uid_key"
 #define USER_ID_KEY @"user_id"
 
-#define CLIENT_LOCATION_KEY @"client_location"
 #define SERVER_LOCATION_KEY @"server_location"
+#define CLIENT_LATENCY_WEST_KEY @"latency_west"
+#define CLIENT_LATENCY_EAST_KEY @"latency_east"
+
+#define CACHE_LIFE_KEY @"cache_life"
+#define CACHE_SIZE_KEY @"cache_size"
+
+#define THUMBS_CACHE_KEY @"thumbs_cache"
+#define FULL_IMG_CACHE_KEY @"full_image_cache"
+
+#define SERVER_DOWNLOAD_ADDR @"west-5412.cloudapp.net/image/"
+
 
 typedef enum ServerLocation: NSInteger {
     AUTOMATIC_SERVER = 0,
@@ -38,12 +49,21 @@ typedef enum ClientLocation: NSInteger {
 
 +(CCImageManager *)sharedInstance;
 -(void)addImageRecord:(NSDictionary *)imageInfo;
--(void)removeImageRecord:(NSDictionary *)imageInfo;
 -(NSArray *)getAllThumbs;
 -(NSArray *)getAllImageNames;
 -(NSArray *)getCachedImageNames;
+-(void)save;
+-(void)removeAllImages;
+-(void)removeLRUimageIfNeeded;
+-(void)addFetchedImageToCache:(UIImage *)image name:(NSString *)name;
+-(void)addImageReadRecord:(NSString *)imageName;
+-(NSArray *)getClientLocation;
 
 @property (nonatomic, strong) NSMutableArray *imageThumbsInfoArray;
 @property (nonatomic, strong) NSMutableArray *cachedImageInfoArray;
+@property (nonatomic, strong) SDImageCache *imageCache;
+
+
+
 
 @end

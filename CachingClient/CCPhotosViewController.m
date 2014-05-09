@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Robert Guo. All rights reserved.
 //
 
+#import <SDWebImage/SDImageCache.h>
 #import "CCPhotosViewController.h"
 #import "CCPhotoCell.h"
 #import "CCPhotoDetailViewController.h"
@@ -51,6 +52,11 @@
     [self.collectionView setDelegate:self];
     [self.collectionView setDataSource:self];
     [self.collectionView registerClass:[CCPhotoCell class] forCellWithReuseIdentifier:@"PhotoCell"];
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [[SDImageCache sharedImageCache] cleanDisk];
 }
 
 - (void)didReceiveMemoryWarning

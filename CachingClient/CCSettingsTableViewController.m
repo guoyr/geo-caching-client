@@ -33,34 +33,80 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)setClientLocation
+-(void)setCacheLife:(NSInteger)cacheLifeIndex
 {
-    NSInteger location = [[NSUserDefaults standardUserDefaults] integerForKey:CLIENT_LOCATION_KEY];
-    switch (location) {
-        case CENTRAL_CLIENT:
+    NSInteger cacheLife = 0;
+    switch (cacheLifeIndex) {
+        case 0:
+            cacheLife = 1;
+            break;
+        case 1:
+            cacheLife = 5;
+            break;
+        case 2:
+            cacheLife = 60;
+            break;
+        case 3:
+            cacheLife = 300;
+            break;
+        case 4:
+            cacheLife = 3600;
+            break;
+        case 5:
+            cacheLife = 10800;
+            break;
+        default:
+            break;
+    }
+    [[SDImageCache sharedImageCache] setMaxCacheAge:cacheLife];
+}
+
+-(void)setCacheSize:(NSInteger)cacheSizeIndex
+{
+    NSInteger cacheLife;
+    switch (cacheSizeIndex) {
+        case 0:
+            cacheLife = 1;
+            break;
+        case 1:
+            cacheLife = 2;
+            break;
+        case 2:
+            cacheLife = 5;
+            break;
+        case 3:
+            cacheLife = 10;
+            break;
+        case 4:
+            cacheLife = 100;
+            break;
+        case 5:
+            cacheLife = 0;
+        default:
+            break;
+    }
+    [[NSUserDefaults standardUserDefaults] setInteger:cacheLife forKey:CACHE_SIZE_KEY];
+}
+
+
+-(void)forceServerLocation:(NSInteger)locationIndex
+{
+    switch (locationIndex) {
+        case LOCALHOST_SERVER:
+            
+            break;
+        case WEST_SERVER:
             ;
             break;
-        case EAST_CLIENT:
+        case EAST_SERVER:
             ;
             break;
-        case WEST_CLIENT:
-            ;
-            break;
-        case ANTARCTICA_CLIENT:
-            ;
-            break;
-        case NONE_CLIENT:
+        case AUTOMATIC_SERVER:
             ;
             break;
         default:
             break;
     }
-}
-
-
--(void)forceServerLocation
-{
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -71,44 +117,33 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.accessoryType = UITableViewCellAccessoryCheckmark;
     
     NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-    
+
     switch (indexPath.section) {
         case 0:
             // reset
             NSLog(@"reset everything");
             [d removeObjectForKey:IMAGE_FULL_KEY];
             [d removeObjectForKey:IMAGE_THUMBS_KEY];
-            [[SDImageCache sharedImageCache] clearDisk];
-            [[SDImageCache sharedImageCache] clearMemory];
+            [[CCImageManager sharedInstance].imageCache clearDisk];
+            [[CCImageManager sharedInstance].imageCache clearMemory];
+            [[CCImageManager sharedInstance] removeAllImages];
             [[CCImageManager sharedInstance].imageThumbsInfoArray removeAllObjects];
             [[CCImageManager sharedInstance].cachedImageInfoArray removeAllObjects];
             break;
         case 1:
             // client location
-            [d setInteger:indexPath.row forKey:CLIENT_LOCATION_KEY];
-            
+            [d setInteger:indexPath.row forKey:SERVER_LOCATION_KEY];
+            break;
         case 2:
-            // master
-            switch (indexPath.row) {
-                case LOCALHOST_SERVER:
-                    NSLog(@"localhost");
-                    break;
-                case WEST_SERVER:
-                    ;
-                    break;
-                case EAST_SERVER:
-                    ;
-                    break;
-                case AUTOMATIC_SERVER:
-                    ;
-                    break;
-                default:
-                    break;
-            }
+            // cache life
+            [self setCacheLife:indexPath.row];
+            break;
+        case 3:
+            // cache size
+            [self setCacheSize:indexPath.row];
+            break;
         default:
             break;
     }
