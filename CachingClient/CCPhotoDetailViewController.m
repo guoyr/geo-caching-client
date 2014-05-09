@@ -53,6 +53,7 @@
 
 -(void)showImage
 {
+    NSLog(@"showing image");
     if (self.curIndex < 0 || self.curIndex >= self.imageNames.count) {
         return;
     }
@@ -73,18 +74,18 @@
         NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
 
         NSArray *info = [m getClientLocation];
-        float eLatency = [(NSNumber *)info[0] floatValue];
-        float wLatency = [(NSNumber *)info[1] floatValue];
-        NSString *serverAddr = info[3];
+        NSString *eLatency = [(NSNumber *)info[0] stringValue];
+        NSString *wLatency = [(NSNumber *)info[1] stringValue];
+        NSString *serverAddr = info[2];
         
-        NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString]};
+        NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString], CLIENT_LATENCY_EAST_KEY: eLatency, CLIENT_LATENCY_WEST_KEY: wLatency};
 
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager GET:serverAddr parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             
             _imageView.image = responseObject;
             [m addFetchedImageToCache:responseObject name:imageName];
-
+            NSLog(@"Success: %@", responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
         }];

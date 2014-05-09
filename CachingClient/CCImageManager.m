@@ -192,6 +192,8 @@
         return;
     }
     
+    NSLog(@"adding image");
+    
     [self removeLRUimageIfNeeded];
     
     [self addToThumbsCacheImage:image Name:uid];
@@ -206,21 +208,21 @@
     //TODO: add closest server
 
     NSArray *info = [self getClientLocation];
-    float eLatency = [(NSNumber *)info[0] floatValue];
-    float wLatency = [(NSNumber *)info[1] floatValue];
+    NSString *eLatency = [(NSNumber *)info[0] stringValue];
+    NSString *wLatency = [(NSNumber *)info[1] stringValue];
     NSString *serverAddr = info[2];
     
-    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString]};
+    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString],CLIENT_LATENCY_EAST_KEY:eLatency, CLIENT_LATENCY_WEST_KEY: wLatency};
 
     NSLog(@"http://west-5412.cloudapp.net:8666/image/?image_uid_key=%@&user_id=%@&is_client=1", uid, [deviceID UUIDString]);
 
-//    [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-//        [formData appendPartWithFormData:imageData name:uid];
-//    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"Success: %@", responseObject);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
-//    }];
+    [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFormData:imageData name:uid];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Success: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 -(void)removeLRUimageIfNeeded
@@ -259,8 +261,8 @@
     float rand1 = (arc4random() % precision) / (float)precision;
     float rand2 = (arc4random() % precision) / (float)precision;
     
-    NSString *eastLoc = @"http://east-5412.cloudapp.net/image/";
-    NSString *westLoc = @"http://west-5412.cloudapp.net/image/";
+    NSString *eastLoc = @"http://east-5412.cloudapp.net:8666/image/";
+    NSString *westLoc = @"http://west-5412.cloudapp.net:8666/image/";
     
     switch (locationIndex) {
         case CENTRAL_CLIENT:
@@ -280,7 +282,7 @@
             latency_east = rand2 * 1000 + 1000;
             break;
         case NONE_CLIENT:
-            location = @"http://localhost/image/";
+            location = @"http://localhost:8666/image/";
             latency_east = 0;
             latency_west = 0;
             break;
