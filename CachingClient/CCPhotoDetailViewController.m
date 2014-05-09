@@ -79,6 +79,7 @@
         NSString *serverAddr = info[2];
         
         NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString], CLIENT_LATENCY_EAST_KEY: eLatency, CLIENT_LATENCY_WEST_KEY: wLatency, @"is_client":@"1"};
+        NSLog(@"GET: parameters:%@", params);
 
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         [manager GET:serverAddr parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {

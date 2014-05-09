@@ -214,7 +214,7 @@
     
     NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString],CLIENT_LATENCY_EAST_KEY:eLatency, CLIENT_LATENCY_WEST_KEY: wLatency};
 
-    NSLog(@"http://west-5412.cloudapp.net:8666/image/?image_uid_key=%@&user_id=%@&is_client=1", uid, [deviceID UUIDString]);
+    NSLog(@"POST: parameters:%@", parameters);
 
     [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
