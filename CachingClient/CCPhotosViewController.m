@@ -56,6 +56,7 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
+    NSLog(@"clean cache");
     [[SDImageCache sharedImageCache] cleanDisk];
 }
 

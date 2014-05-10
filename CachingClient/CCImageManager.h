@@ -18,8 +18,11 @@
 #define USER_ID_KEY @"user_id"
 
 #define SERVER_LOCATION_KEY @"server_location"
-#define CLIENT_LATENCY_WEST_KEY @"latency_west"
-#define CLIENT_LATENCY_EAST_KEY @"latency_east"
+
+#define CLIENT_LATENCY_KEY @"latency_key"
+
+#define TRANSFER_FROM_KEY @"from_key"
+#define TRANSER_TO_KEY @"to_key"
 
 #define CACHE_LIFE_KEY @"cache_life"
 #define CACHE_SIZE_KEY @"cache_size"

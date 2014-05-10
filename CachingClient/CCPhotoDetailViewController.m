@@ -46,19 +46,16 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.imageNames = [[CCImageManager sharedInstance] getCachedImageNames];
+    self.imageNames = [[CCImageManager sharedInstance] getAllImageNames];
     
 }
 
 
 -(void)showImage
 {
-    NSLog(@"showing image");
-    if (self.curIndex < 0 || self.curIndex >= self.imageNames.count) {
-        return;
-    }
     NSString *imageName = self.imageNames[self.curIndex];
-    
+    NSLog(@"showing image %@", imageName);
+
     CCImageManager *m = [CCImageManager sharedInstance];
     if ([m.cachedImageInfoArray containsObject:imageName]) {
         NSLog(@"image exists locally");
@@ -74,14 +71,14 @@
         NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
 
         NSArray *info = [m getClientLocation];
-        NSString *eLatency = [(NSNumber *)info[0] stringValue];
-        NSString *wLatency = [(NSNumber *)info[1] stringValue];
-        NSString *serverAddr = info[2];
+        NSString *latency = [(NSNumber *)info[0] stringValue];
+        NSString *serverAddr = info[1];
         
-        NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString], CLIENT_LATENCY_EAST_KEY: eLatency, CLIENT_LATENCY_WEST_KEY: wLatency, @"is_client":@"1"};
-        NSLog(@"GET: parameters:%@", params);
+        NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString], CLIENT_LATENCY_KEY:latency,  @"is_client":@"1"};
+        NSLog(@"POST: server: %@ parameters:%@", serverAddr, params);
 
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFImageResponseSerializer serializer];
         [manager GET:serverAddr parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             
             _imageView.image = responseObject;
@@ -99,10 +96,14 @@
         CGPoint location = [sender locationInView:self.view];
         if (location.x < self.view.bounds.size.width / 2) {
             // tapped on the left
-            _curIndex--;
+            if (_curIndex > 0) {
+                _curIndex--;
+            }
         } else {
             //tapped on the right
-            _curIndex++;
+            if (_curIndex < self.imageNames.count - 1) {
+                _curIndex++;
+            }
         }
         [self showImage];
     }

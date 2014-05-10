@@ -100,7 +100,7 @@
 {
     NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
     [d setObject:self.imageThumbsInfoArray forKey:IMAGE_THUMBS_KEY];
-    
+    [d synchronize];
 }
 
 + (id)sharedInstance {
@@ -193,7 +193,8 @@
     }
     
     NSLog(@"adding image");
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
     [self removeLRUimageIfNeeded];
     
     [self addToThumbsCacheImage:image Name:uid];
@@ -205,24 +206,24 @@
     NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
     
     
-    //TODO: add closest server
-
     NSArray *info = [self getClientLocation];
-    NSString *eLatency = [(NSNumber *)info[0] stringValue];
-    NSString *wLatency = [(NSNumber *)info[1] stringValue];
-    NSString *serverAddr = info[2];
+    NSString *latency = [(NSNumber *)info[0] stringValue];
+    NSString *serverAddr = info[1];
     
-    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString],CLIENT_LATENCY_EAST_KEY:eLatency, CLIENT_LATENCY_WEST_KEY: wLatency};
+    NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString],CLIENT_LATENCY_KEY: latency};
 
-    NSLog(@"POST: parameters:%@", parameters);
-
+    NSLog(@"POST: server: %@ parameters:%@", serverAddr, parameters);
+    
     [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@", responseObject);
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     }];
+    [self save];
 }
 
 -(void)removeLRUimageIfNeeded
@@ -254,9 +255,10 @@
 {
     NSInteger locationIndex = [[NSUserDefaults standardUserDefaults] integerForKey:SERVER_LOCATION_KEY];
     NSString *location;
-    float latency_west;
-    float latency_east;
-    
+    float latency_west = 0;
+    float latency_east = 0;
+    float latency = 0;
+
     int precision = 10000;
     float rand1 = (arc4random() % precision) / (float)precision;
     float rand2 = (arc4random() % precision) / (float)precision;
@@ -283,17 +285,17 @@
             break;
         case NONE_CLIENT:
             location = @"http://localhost:8666/image/";
-            latency_east = 0;
-            latency_west = 0;
             break;
         default:
             break;
     }
+    
     if (!location) {
         location = latency_east < latency_west ? eastLoc : westLoc;
+        latency = latency_east < latency_west ? latency_east : latency_west;
     }
     
-    return @[[NSNumber numberWithFloat:latency_east], [NSNumber numberWithFloat:latency_west], location];
+    return @[[NSNumber numberWithFloat:latency], location];
 }
 
 @end

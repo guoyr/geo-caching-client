@@ -122,15 +122,25 @@
 
     switch (indexPath.section) {
         case 0:
-            // reset
-            NSLog(@"reset everything");
-            [d removeObjectForKey:IMAGE_FULL_KEY];
-            [d removeObjectForKey:IMAGE_THUMBS_KEY];
-            [[CCImageManager sharedInstance].imageCache clearDisk];
-            [[CCImageManager sharedInstance].imageCache clearMemory];
-            [[CCImageManager sharedInstance] removeAllImages];
-            [[CCImageManager sharedInstance].imageThumbsInfoArray removeAllObjects];
-            [[CCImageManager sharedInstance].cachedImageInfoArray removeAllObjects];
+            switch (indexPath.row) {
+                case 0:
+                    // reset
+                    NSLog(@"reset everything");
+                    [d removeObjectForKey:IMAGE_FULL_KEY];
+                    [d removeObjectForKey:IMAGE_THUMBS_KEY];
+                    [[CCImageManager sharedInstance].imageCache clearDisk];
+                    [[CCImageManager sharedInstance].imageCache clearMemory];
+                    [[CCImageManager sharedInstance] removeAllImages];
+                    [[CCImageManager sharedInstance].imageThumbsInfoArray removeAllObjects];
+                    [[CCImageManager sharedInstance].cachedImageInfoArray removeAllObjects];
+                    break;
+                case 1:
+                    [[SDImageCache sharedImageCache] clearMemory];
+                    break;
+                default:
+                    break;
+            }
+            
             break;
         case 1:
             // client location
