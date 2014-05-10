@@ -213,7 +213,7 @@
     NSDictionary *parameters = @{IMAGE_UID_KEY: uid,USER_ID_KEY:[deviceID UUIDString],CLIENT_LATENCY_KEY: latency};
 
     NSLog(@"POST: server: %@ parameters:%@", serverAddr, parameters);
-    NSLog(@"%@image/image/?image_uid_key=%@&user_uid_key=4%@&is_client=1&latency_key=%@", info[1], uid, [deviceID UUIDString], latency);
+    NSLog(@"%@?image_uid_key=%@&user_uid_key=4%@&is_client=1&latency_key=%@", info[1], uid, [deviceID UUIDString], latency);
     [manager POST:serverAddr parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFormData:imageData name:uid];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
