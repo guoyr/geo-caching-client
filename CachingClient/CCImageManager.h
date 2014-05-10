@@ -15,7 +15,7 @@
 
 #define IMAGE_UID_KEY @"image_uid_key"
 #define DEVICE_UID_KEY @"device_uid_key"
-#define USER_ID_KEY @"user_id"
+#define USER_ID_KEY @"user_uid_key"
 
 #define SERVER_LOCATION_KEY @"server_location"
 
