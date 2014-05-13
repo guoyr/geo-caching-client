@@ -20,7 +20,8 @@
 @property (nonatomic, strong) UIButton *viewButton;
 @property (nonatomic, strong) UIImagePickerController *picker;
 @property (nonatomic, strong) UIButton *resetButton;
-
+@property (nonatomic, strong) UIButton *overlayView;
+@property (nonatomic, strong) NSDate *startDate;
 @end
 
 @implementation CCMenuViewController
@@ -72,15 +73,53 @@
     [self.picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     [self.picker.navigationBar setTintColor:[UIColor lightGrayColor]];
     [self.picker setDelegate:self];
+    
+    self.overlayView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 240, 160)];
+    CGPoint center = self.view.center;
+    center.y -= 40;
+    self.overlayView.center = center;
+    self.overlayView.layer.cornerRadius = 5;
+    self.overlayView.backgroundColor = [UIColor lightGrayColor];
+    [self.overlayView setAlpha:0.8];
+    [self.overlayView setTitle:@"Uploading Image" forState:UIControlStateNormal];
+    self.overlayView.titleLabel.textColor = [UIColor blackColor];
+    
+    [self.overlayView addTarget:self action:@selector(done:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:self.uploadButton];
     [self.view addSubview:self.viewButton];
     [self.view addSubview:self.resetButton];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadCompleted:) name:@"UploadCompleteNotification" object:nil];
+
+}
+
+-(void)done:(id)sender
+{
+    [self.overlayView removeFromSuperview];
+    self.uploadButton.hidden = NO;
+    self.viewButton.hidden = NO;
+}
+
+-(void)uploadCompleted:(NSNotification *)notification
+{
+    NSLog(@"upload completed");
+    NSString *sent = (NSString *)notification.object;
+    
+    if ([sent isEqualToString:@"True"]) {
+        NSDate *doneDate = [NSDate date];
+        [self.overlayView setTitle:[NSString stringWithFormat:@"Uploading done in :%.2fs", [doneDate timeIntervalSinceDate:self.startDate]] forState:UIControlStateNormal];
+    } else {
+        [self.overlayView setTitle:@"Already Uploaded" forState:UIControlStateNormal];
+    }
+    
+    self.overlayView.titleLabel.textColor = [UIColor blackColor];
+
+    [self.overlayView setUserInteractionEnabled:YES];
 }
 
 -(void)reset:(id)sender
 {
-
     UIStoryboard *tableViewStoryboard = [UIStoryboard storyboardWithName:@"Storyboard" bundle:nil];
     CCSettingsTableViewController *vc = [tableViewStoryboard instantiateViewControllerWithIdentifier:@"settingsVC"];
     [self.navigationController pushViewController:vc animated:YES];
@@ -112,7 +151,14 @@
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [self dismissViewControllerAnimated:YES completion:^{
+        [self.view addSubview:self.overlayView];
+        [self.overlayView setUserInteractionEnabled:NO];
+        self.uploadButton.hidden = YES;
+        self.viewButton.hidden = YES;
+        [self.overlayView setTitle:@"Uploading Image" forState:UIControlStateNormal];
+        self.overlayView.titleLabel.textColor = [UIColor blackColor];
         [[CCImageManager sharedInstance] addImageRecord:info];
+        self.startDate = [NSDate date];
     }];
 }
 

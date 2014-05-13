@@ -136,6 +136,7 @@
                     break;
                 case 1:
                     [[SDImageCache sharedImageCache] clearMemory];
+                    [[CCImageManager sharedInstance].cachedImageInfoArray removeAllObjects];
                     break;
                 default:
                     break;
@@ -154,6 +155,9 @@
             // cache size
             [self setCacheSize:indexPath.row];
             break;
+        case 4:
+            //prefetching
+            [[NSUserDefaults standardUserDefaults] setBool:indexPath.row forKey:@"prefetchImage"];
         default:
             break;
     }

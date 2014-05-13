@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Robert Guo. All rights reserved.
 //
 
+#import "SDImageCache.h"
+
 #import "CCAppDelegate.h"
 #import "CCMenuViewController.h"
 #import "CCImageManager.h"
@@ -54,6 +56,8 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    [[SDImageCache sharedImageCache] clearMemory];
+    [[CCImageManager sharedInstance].cachedImageInfoArray removeAllObjects];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

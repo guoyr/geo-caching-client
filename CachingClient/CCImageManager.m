@@ -189,16 +189,12 @@
     
     if ([self imageExists:uid]) {
         NSLog(@"image already exists, not added");
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadCompleteNotification" object:@"False"];
         return;
     }
     
     NSLog(@"adding image");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-
-    [self removeLRUimageIfNeeded];
-    
-    [self addToThumbsCacheImage:image Name:uid];
-    [self addToCacheImage:image Name:uid];
     
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     
@@ -219,8 +215,14 @@
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@", responseObject);
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadCompleteNotification" object:@"True"];
+        [self removeLRUimageIfNeeded];
+        [self addToThumbsCacheImage:image Name:uid];
+        [self addToCacheImage:image Name:uid];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"UploadCompleteNotification" object:@"True"];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     }];
     [self save];
@@ -229,7 +231,7 @@
 -(void)removeLRUimageIfNeeded
 {
     NSInteger cacheSize = [[NSUserDefaults standardUserDefaults] integerForKey:CACHE_SIZE_KEY];
-    if (self.cachedImageInfoArray.count >= cacheSize) {
+    while (self.cachedImageInfoArray.count >= cacheSize) {
         NSString *imgName = self.cachedImageInfoArray[0];
         [self.cachedImageInfoArray removeObjectAtIndex:0];
         [self.imageCache removeImageForKey:imgName];

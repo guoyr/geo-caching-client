@@ -10,6 +10,7 @@
 #import "CCPhotosViewController.h"
 #import "CCPhotoCell.h"
 #import "CCPhotoDetailViewController.h"
+#import "CCImageManager.h"
 
 @interface CCPhotosViewController ()
 
@@ -56,8 +57,7 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    NSLog(@"clean cache");
-    [[SDImageCache sharedImageCache] cleanDisk];
+
 }
 
 - (void)didReceiveMemoryWarning

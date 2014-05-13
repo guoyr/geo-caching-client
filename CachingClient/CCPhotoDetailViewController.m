@@ -15,6 +15,7 @@
 
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) NSArray *imageNames;
+@property (nonatomic, strong) UILabel *transferTimeLabel;
 
 @end
 
@@ -36,10 +37,21 @@
     self.title = @"View Image detail";
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [self.view addGestureRecognizer:tapGR];
-    self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    CGRect frame = self.view.bounds;
+    frame.size.height = 440;
+    self.imageView = [[UIImageView alloc] initWithFrame:frame];
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.imageView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.imageView];
     [self.imageView setBackgroundColor:[UIColor blackColor]];
+    
+    self.transferTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 440, 320, 48)];
+    [self.transferTimeLabel setBackgroundColor:[UIColor darkGrayColor]];
+    [self.transferTimeLabel setTextColor:[UIColor whiteColor]];
+    self.transferTimeLabel.text = @"";
+    [self.transferTimeLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.view addSubview:self.transferTimeLabel];
+    
     // Do any additional setup after loading the view.
 }
 
@@ -47,18 +59,34 @@
 {
     [super viewWillAppear:animated];
     self.imageNames = [[CCImageManager sharedInstance] getAllImageNames];
-    
+    self.imageView.image = nil;
+    self.transferTimeLabel.text = nil;
+}
+
+-(void)prefetchImageAtIndex:(NSInteger)index
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"prefetchImage"]) {
+        NSLog(@"prefetching image at index %ld", index);
+        [self getImageAndShow:NO atIndex:index];
+    } else {
+        NSLog(@"no prefetch");
+    }
 }
 
 
--(void)showImage
+-(void)getImageAndShow:(BOOL)show atIndex:(NSInteger)index
 {
-    NSString *imageName = self.imageNames[self.curIndex];
+
+    index %= self.imageNames.count;
+    if (show) {
+        [self prefetchImageAtIndex:self.curIndex + 1];
+    }
+    NSString *imageName = self.imageNames[index];
     NSLog(@"showing image %@", imageName);
 
     CCImageManager *m = [CCImageManager sharedInstance];
-    if ([m.cachedImageInfoArray containsObject:imageName]) {
-        NSLog(@"image exists locally");
+    if ([m.cachedImageInfoArray containsObject:imageName] && show) {
+        self.transferTimeLabel.text = @"Image Exists Locally";
         [m addImageReadRecord:imageName];
         UIImage *image = [m.imageCache imageFromMemoryCacheForKey:imageName];
         
@@ -76,43 +104,52 @@
         
         NSDictionary *params = @{IMAGE_UID_KEY:imageName, USER_ID_KEY:[deviceID UUIDString], CLIENT_LATENCY_KEY:latency,  @"is_client":@"1"};
         NSLog(@"POST: server: %@ parameters:%@", serverAddr, params);
-
+        NSDate *start = [NSDate date];
         AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
         manager.responseSerializer = [AFImageResponseSerializer serializer];
         [manager GET:serverAddr parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
-            _imageView.image = responseObject;
+            if (show) {
+                NSString *time = [NSString stringWithFormat:@"Downloading from \"%@\" done in :%.2fs", [serverAddr substringWithRange:NSMakeRange(7, 4)],[[NSDate date] timeIntervalSinceDate:start]];
+                self.transferTimeLabel.text = time;
+                _imageView.image = responseObject;
+            }
             [m addFetchedImageToCache:responseObject name:imageName];
             NSLog(@"Success: %@", responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
+            UIAlertView *view = [[UIAlertView alloc] initWithTitle:@"Get Image Failed" message:error.description delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [view show];
         }];
     }
 }
 
 -(void)viewTapped:(UITapGestureRecognizer *)sender
 {
+    NSInteger index = self.curIndex;
     if (sender.state == UIGestureRecognizerStateEnded) {
         CGPoint location = [sender locationInView:self.view];
         if (location.x < self.view.bounds.size.width / 2) {
             // tapped on the left
-            if (_curIndex > 0) {
-                _curIndex--;
+            if (index > 0) {
+                index--;
             }
         } else {
             //tapped on the right
-            if (_curIndex < self.imageNames.count - 1) {
-                _curIndex++;
+            if (index < self.imageNames.count - 1) {
+                index++;
             }
         }
-        [self showImage];
+        if (index != _curIndex) {
+            self.curIndex = index;
+            [self getImageAndShow:YES atIndex:self.curIndex];
+        }
     }
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self showImage];
+    [self getImageAndShow:YES atIndex:self.curIndex];
 }
 
 - (void)didReceiveMemoryWarning

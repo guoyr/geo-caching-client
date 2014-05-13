@@ -10,6 +10,6 @@
 
 @interface CCPhotoDetailViewController : UIViewController
 
-@property (nonatomic, assign) int curIndex;
+@property (nonatomic, assign) NSInteger curIndex;
 
 @end
